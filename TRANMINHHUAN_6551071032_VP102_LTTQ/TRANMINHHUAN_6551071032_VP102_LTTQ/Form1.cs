@@ -1,0 +1,203 @@
+using Microsoft.Data.SqlClient;
+using Microsoft.Data;
+using System.Data;
+using Microsoft.EntityFrameworkCore;
+namespace TRANMINHHUAN_6551071032_VP102_LTTQ
+{
+    public partial class Form1 : Form
+    {
+        private string connectionString = "Data Source=DESKTOP-IMF1D48;Initial Catalog=DuLieu;Integrated Security=True;TrustServerCertificate=True";
+        private bool isAdding = false;
+        public Form1()
+        {
+            InitializeComponent();
+        }
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            LoadData();
+            SetControlState(1);
+        }
+
+        private void LoadData()
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM SinhVien", conn);
+                DataTable dt = new DataTable();
+                adapter.Fill(dt); 
+                dataGridView1.DataSource = dt;
+            }
+        }
+        private void SetControlState(int state)
+        {
+            switch (state)
+            {
+                case 1:
+                    txtMSSV.Enabled = txtTen.Enabled = txtDTB.Enabled = true;
+                    btnThem.Enabled = btnThoat.Enabled = true;
+                    //btnSua.Enabled = btnXoa.Enabled = false;
+                    break;
+                case 2:
+                    txtMSSV.Enabled = txtTen.Enabled = txtDTB.Enabled = true;
+                  
+                    btnSua.Enabled = btnXoa.Enabled = true;
+                    break;
+                case 3:
+                    txtMSSV.Enabled = txtTen.Enabled = txtDTB.Enabled = true;
+                    ClearTextBoxes();
+                    txtMSSV.Focus();
+                    break;
+                case 4:
+                    txtMSSV.Enabled = false;
+                    txtTen.Focus();
+                    break;
+            }
+        }
+        private void ClearTextBoxes()
+        {
+            txtMSSV.Clear();
+            txtTen.Clear();
+            txtDTB.Clear();
+        }
+
+        private void btnThoat_Click(object sender, EventArgs e)
+        {
+           if(MessageBox.Show("Bạn có chắc chắn muốn thoát không?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                Application.Exit();
+            }
+        }
+
+        private void dgvSinhVien_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0)
+            {
+                DataGridViewRow row = dataGridView1.Rows[e.RowIndex];
+                txtMSSV.Text = row.Cells[0].Value.ToString();
+                txtTen.Text = row.Cells[1].Value.ToString();
+                txtDTB.Text = row.Cells[2].Value.ToString();
+                SetControlState(2);
+            }
+        }
+        private void btnThem_Click(object sender, EventArgs e)
+        {
+            if(!ValidateData())
+            {
+                return;
+            }
+            if(isAdding && IsDuplicateMSSV(txtMSSV.Text))
+            {
+                MessageBox.Show("Mã sinh viên đã tồn tại. Vui lòng nhập mã khác.");
+                txtMSSV.Focus();
+                return;
+            }
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    string query = isAdding ? "INSERT INTO SinhVien (MaSinhVien, TenSinhVien, DiemTrungBinh) VALUES (@MaSinhVien, @TenSinhVien, @DiemTrungBinh)" :
+                        "UPDATE SinhVien SET TenSinhVien=@TenSinhVien, DiemTrungBinh=@DiemTrungBinh WHERE MaSinhVien=@MaSinhVien";
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@MaSinhVien", txtMSSV.Text.Trim());
+                    cmd.Parameters.AddWithValue("@TenSinhVien", txtTen.Text.Trim());
+                    cmd.Parameters.AddWithValue("@DiemTrungBinh", txtDTB.Text.Trim());
+                    cmd.ExecuteNonQuery();
+                    LoadData();
+                    SetControlState(1);
+                    MessageBox.Show(isAdding ? "Thêm sinh viên thành công." : "Cập nhật sinh viên thành công.");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi khi thực hiện thao tác: " + ex.Message);
+                }
+            }
+        }
+        private void btnSua_Click(object sender, EventArgs e)
+        {
+            if (isAdding)
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    string query = "INSERT INTO SinhVien (MaSinhVien, TenSinhVien, DiemTrungBinh) VALUES (@MaSinhVien, @TenSinhVien, @DiemTrungBinh)";
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@MaSinhVien", txtMSSV.Text);
+                    cmd.Parameters.AddWithValue("@TenSinhVien", txtTen.Text);
+                    cmd.Parameters.AddWithValue("@DiemTrungBinh", txtDTB.Text);
+                    cmd.ExecuteNonQuery();
+                }
+                isAdding = false;
+            }
+            else
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    string query = "UPDATE SinhVien SET TenSinhVien=@TenSinhVien, DiemTrungBinh=@DiemTrungBinh WHERE MaSinhVien=@MaSinhVien";
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@MaSinhVien", txtMSSV.Text);
+                    cmd.Parameters.AddWithValue("@TenSinhVien", txtTen.Text);
+                    cmd.Parameters.AddWithValue("@DiemTrungBinh", txtDTB.Text);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+            LoadData();
+            SetControlState(1);
+        }
+        private void btnXoa_Click(object sender, EventArgs e)
+        {
+            DialogResult result = MessageBox.Show("Bạn có chắc chắn muốn xóa sinh viên này?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (result != DialogResult.Yes)
+            {
+                return;
+            }
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                string query = "DELETE FROM SinhVien WHERE MaSinhVien=@MaSinhVien";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@MaSinhVien", txtMSSV.Text);
+                cmd.ExecuteNonQuery();
+            }
+            LoadData();
+            SetControlState(1);
+        }
+
+        private bool ValidateData()
+        {
+            if (string.IsNullOrWhiteSpace(txtMSSV.Text))
+            {
+                MessageBox.Show("Mã sinh viên không được để trống.");
+                txtMSSV.Focus();
+                return false;
+            }
+            if (string.IsNullOrWhiteSpace(txtTen.Text))
+            {
+                MessageBox.Show("Tên sinh viên không được để trống.");
+                txtTen.Focus();
+                return false;
+            }
+            if (!double.TryParse(txtDTB.Text, out double dtb) || dtb < 0 || dtb > 10)
+            {
+                MessageBox.Show("Điểm trung bình phải là một số từ 0 đến 10.");
+                txtDTB.Focus();
+                return false;
+            }
+            return true;
+        }
+        private bool IsDuplicateMSSV(string mssv)
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                string query = "SELECT COUNT(*) FROM SinhVien WHERE MaSinhVien=@MaSinhVien";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@MaSinhVien", mssv);
+                int count = (int)cmd.ExecuteScalar();
+                return count > 0;
+            }
+        }
+
+    }
+}

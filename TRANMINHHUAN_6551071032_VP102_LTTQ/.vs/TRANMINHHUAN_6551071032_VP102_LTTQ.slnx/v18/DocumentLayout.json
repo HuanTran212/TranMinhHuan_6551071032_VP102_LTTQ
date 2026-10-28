@@ -1,0 +1,36 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\Project\\TranMinhHuan_6551071032_VP102_LTTQ\\TRANMINHHUAN_6551071032_VP102_LTTQ\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{905F1C71-9E28-18EE-9612-8BA6A8FA1863}|TRANMINHHUAN_6551071032_VP102_LTTQ\\TRANMINHHUAN_6551071032_VP102_LTTQ.csproj|d:\\project\\tranminhhuan_6551071032_vp102_lttq\\tranminhhuan_6551071032_vp102_lttq\\tranminhhuan_6551071032_vp102_lttq\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{905F1C71-9E28-18EE-9612-8BA6A8FA1863}|TRANMINHHUAN_6551071032_VP102_LTTQ\\TRANMINHHUAN_6551071032_VP102_LTTQ.csproj|solutionrelative:tranminhhuan_6551071032_vp102_lttq\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Form1.cs [Design]",
+              "DocumentMoniker": "D:\\Project\\TranMinhHuan_6551071032_VP102_LTTQ\\TRANMINHHUAN_6551071032_VP102_LTTQ\\TRANMINHHUAN_6551071032_VP102_LTTQ\\Form1.cs",
+              "RelativeDocumentMoniker": "TRANMINHHUAN_6551071032_VP102_LTTQ\\Form1.cs",
+              "ToolTip": "D:\\Project\\TranMinhHuan_6551071032_VP102_LTTQ\\TRANMINHHUAN_6551071032_VP102_LTTQ\\TRANMINHHUAN_6551071032_VP102_LTTQ\\Form1.cs [Design]",
+              "RelativeToolTip": "TRANMINHHUAN_6551071032_VP102_LTTQ\\Form1.cs [Design]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-28T07:47:22.316Z",
+              "EditorCaption": " [Design]"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
